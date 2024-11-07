@@ -90,11 +90,16 @@ class RelatedElements extends Plugin
 
                     foreach ($blocks->all() as $block) {
                         foreach ($relatedTypes as $type => $class) {
-                            $nestedRelatedElements[$field->name][$type] = $class::find()
+                            $elements = $class::find()
                                 ->relatedTo($block)
                                 ->status(null)
                                 ->orderBy('title')
                                 ->all();
+
+                            $nestedRelatedElements[$field->name][$type] =
+                                !isset($nestedRelatedElements[$field->name][$type]) ?
+                                    $elements :
+                                    array_merge($nestedRelatedElements[$field->name][$type], $elements);
 
                             if (!empty($nestedRelatedElements[$field->name][$type])) {
                                 $hasResults = true;
